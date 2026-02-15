@@ -3,38 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品扫码查询系统</title>
+    <title>自动扫码查询系统</title>
     <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #f1f5f9; min-height: 100vh; }
+        body { background-color: #f1f5f9; }
+        /* 预留相机占位高度，防止自动启动时闪烁 */
         #reader {
-            width: 100%; max-width: 400px; margin: 0 auto;
-            border-radius: 16px; overflow: hidden;
-            border: 4px solid white; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-        }
-        #reader__dashboard_section_csr button {
-            background-color: #2563eb; color: white; padding: 6px 12px;
-            border-radius: 6px; font-size: 14px; margin-top: 8px;
+            width: 100%;
+            max-width: 400px;
+            min-height: 300px; 
+            margin: 0 auto;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body class="p-4 md:p-8">
-
     <div class="max-w-md mx-auto space-y-6">
-        <header class="text-center py-2">
-            <h1 class="text-2xl font-bold text-slate-800">商品自助查询</h1>
-            <p class="text-slate-500 text-xs">基于 Markdown 数据库</p>
+        <header class="text-center">
+            <h1 class="text-2xl font-black text-slate-800 tracking-tight">智能终端</h1>
+            <p class="text-slate-400 text-[10px] uppercase">Auto-Scan Enabled</p>
         </header>
 
         <div id="reader"></div>
 
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
             <div class="flex gap-2">
                 <input type="text" id="manual-input" placeholder="输入条码..." 
-                       class="flex-1 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                <button onclick="window.handleManualSearch()" class="bg-slate-800 text-white px-6 py-2 rounded-xl text-sm font-bold shadow-sm">查询</button>
+                       class="flex-1 bg-slate-50 border-none rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                <button onclick="window.handleManualSearch()" class="bg-blue-600 text-white px-5 py-2 rounded-xl text-sm font-bold">查询</button>
             </div>
+        </div>
+
+        <div id="product-card" class="hidden animate-in fade-in slide-in-from-bottom-5 duration-500">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
+                <div class="aspect-square bg-white flex items-center justify-center p-8">
+                     <img id="product-image" src="" class="max-w-full max-h-full object-contain shadow-sm">
+                </div>
+                <div class="p-6 border-t border-slate-50">
+                    <span id="product-type" class="px-2 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded"></span>
+                    <h2 id="product-name" class="text-xl font-bold text-slate-800 mt-2"></h2>
+                    <p id="product-desc" class="text-xs text-slate-500 mt-3 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100"></p>
+                    <div class="flex items-end justify-between mt-6">
+                        <div class="text-[10px] text-slate-400 font-mono">条码: <span id="product-barcode"></span></div>
+                        <div class="text-3xl font-black text-blue-600 italic leading-none">
+                            <span class="text-sm">¥</span><span id="product-price"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="window.resetSearch()" class="w-full mt-4 py-3 text-slate-400 text-xs font-bold hover:text-blue-500 transition-colors bg-white rounded-xl border border-dashed">
+                点此重新扫描
+            </button>
+        </div>
+
+        <div id="error-message" class="hidden p-3 bg-red-50 text-red-500 rounded-xl text-center text-[10px] font-bold border border-red-100">
+            未在 MD 数据库中找到该条码
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>            </div>
         </div>
 
         <div id="product-card" class="hidden space-y-4">
